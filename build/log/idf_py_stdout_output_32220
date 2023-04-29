@@ -1,0 +1,46 @@
+-- Existing sdkconfig 'D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/sdkconfig' renamed to 'D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/sdkconfig.old'.
+-- Found Git: D:/Small_Program/Git/cmd/git.exe (found version "2.37.3.windows.1") 
+-- ccache will be used for faster recompilation
+-- The C compiler identification is GNU 12.2.0
+-- The CXX compiler identification is GNU 12.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: D:/Program/Espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc.exe
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: D:/Program/Espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: D:/Program/Espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin/xtensa-esp32-elf-g++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Project is not inside a git repository, or git repository has no commits; will not use 'git describe' to determine PROJECT_VER.
+-- Building ESP-IDF components for target esp32
+-- Project sdkconfig file D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/sdkconfig
+-- Looking for sys/types.h
+-- Looking for sys/types.h - found
+-- Looking for stdint.h
+-- Looking for stdint.h - found
+-- Looking for stddef.h
+-- Looking for stddef.h - found
+-- Check size of time_t
+-- Check size of time_t - done
+-- Found Python3: D:/Program/Espressif/python_env/idf5.2_py3.10_env/Scripts/python.exe (found version "3.10.7") found components: Interpreter 
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
+-- App "FloorLamp" version: 1
+-- Adding linker script D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/build/esp-idf/esp_system/ld/memory.ld
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_system/ld/esp32/sections.ld.in
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_rom/esp32/ld/esp32.rom.ld
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_rom/esp32/ld/esp32.rom.api.ld
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_rom/esp32/ld/esp32.rom.libgcc.ld
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_rom/esp32/ld/esp32.rom.newlib-data.ld
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_rom/esp32/ld/esp32.rom.syscalls.ld
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_rom/esp32/ld/esp32.rom.newlib-funcs.ld
+-- Adding linker script D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/soc/esp32/ld/esp32.peripherals.ld
+-- Components: app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp_adc esp_app_format esp_coex esp_common esp_eth esp_event esp_gdbstub esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_local_ctrl esp_mm esp_netif esp_netif_stack esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_system esp_timer esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser idf_test ieee802154 json log lwip main mbedtls mqtt newlib nvs_flash openthread partition_table perfmon protobuf-c protocomm pthread sdmmc soc spi_flash spiffs tcp_transport ulp unity usb vfs wear_levelling wifi_provisioning wpa_supplicant xtensa
+-- Component paths: D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/app_trace D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/app_update D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/bootloader D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/bootloader_support D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/bt D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/cmock D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/console D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/cxx D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/driver D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/efuse D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp-tls D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_adc D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_app_format D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_coex D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_common D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_eth D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_event D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_gdbstub D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_hid D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_http_client D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_http_server D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_https_ota D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_https_server D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_hw_support D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_lcd D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_local_ctrl D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_mm D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_netif D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_netif_stack D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_partition D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_phy D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_pm D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_psram D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_ringbuf D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_rom D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_system D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_timer D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esp_wifi D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/espcoredump D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/esptool_py D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/fatfs D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/freertos D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/hal D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/heap D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/http_parser D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/idf_test D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/ieee802154 D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/json D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/log D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/lwip D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/mbedtls D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/mqtt D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/newlib D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/nvs_flash D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/openthread D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/partition_table D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/perfmon D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/protobuf-c D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/protocomm D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/pthread D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/sdmmc D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/soc D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/spi_flash D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/spiffs D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/tcp_transport D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/ulp D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/unity D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/usb D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/vfs D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/wear_levelling D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/wifi_provisioning D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/wpa_supplicant D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/xtensa
+-- Configuring done
+-- Generating done
+-- Build files have been written to: D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/build

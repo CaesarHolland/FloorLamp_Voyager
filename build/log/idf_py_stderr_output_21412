@@ -1,0 +1,12 @@
+warning: <choice ENCODER_SETTINGS> (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:10) defined with type int
+warning: default on the choice symbol ENCODER_CLK (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:12) will have no effect, as defaults do not affect choice symbols
+warning: default on the choice symbol ENCODER_DT (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:17) will have no effect, as defaults do not affect choice symbols
+warning: <choice LIGHT_SETTINGS> (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:24) defined with type int
+warning: default on the choice symbol LIGHT_BULB_RELAY (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:26) will have no effect, as defaults do not affect choice symbols
+warning: default on the choice symbol LIGHT_LED_RELAY (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:31) will have no effect, as defaults do not affect choice symbols
+warning: default on the choice symbol PUBLIC_OUTPUT_IO (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:36) will have no effect, as defaults do not affect choice symbols
+warning: default on the choice symbol PRIVATE_OUTPUT_IO (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:41) will have no effect, as defaults do not affect choice symbols
+warning: default on the choice symbol DUTY_THRESHOLD (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:46) will have no effect, as defaults do not affect choice symbols
+warning: default on the choice symbol DUTY_MAX_THRESHOLD (defined at D:/Caesar/CodeArea/ESP32_Experiment/FloorLamp/main/Kconfig.projbuild:50) will have no effect, as defaults do not affect choice symbols
+Compiler supported targets: xtensa-esp32-elf
+

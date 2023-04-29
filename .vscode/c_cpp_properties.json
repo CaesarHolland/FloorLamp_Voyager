@@ -1,0 +1,27 @@
+{
+    "configurations": [
+        {
+            "name": "FloorLamp_Proj",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/Program/Espressif/**"
+            ],
+            "forcedInclude": [
+                "D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/mdns/include/mdns.h"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.19041.0",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64",
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "compilerArgs": []
+        }
+    ],
+    "version": 4
+}

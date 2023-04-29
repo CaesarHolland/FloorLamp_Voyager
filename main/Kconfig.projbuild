@@ -1,0 +1,60 @@
+menu "FLOORLAMP Configuration"
+
+    config FLOORLAMP_MDNS_HOST_NAME
+        string "mDNS Host Name"
+        default "floorlamp_voyager"
+        help
+            Specify the domain name used in the mDNS service.
+            Note that webpage also take it as a part of URL where it will send GET/POST requests to.
+
+    choice ENCODER_SETTINGS
+        prompt "Encoder GPIO settings"
+        config ENCODER_CLK
+            int "encoder_clk"
+            default 18
+            help 
+                Specify the encoder Pin of CLK
+        config ENCODER_DT
+            int "encoder_dt"
+            default 19
+            help 
+                Specify the encoder Pin of DT
+    endchoice
+
+    choice LIGHT_SETTINGS
+        prompt "Light GPIO settings"
+        config LIGHT_BULB_RELAY
+            int "light_bulb_relay"
+            default 22
+            help 
+                Specify the encoder Pin of CLK
+        config LIGHT_LED_RELAY
+            int "light_led_relay"
+            default 23
+            help 
+                Specify the encoder Pin of DT
+        config PUBLIC_OUTPUT_IO
+            int "public_output_io"
+            default 12
+            help 
+                Specify the encoder Pin of DT
+        config PRIVATE_OUTPUT_IO
+            int "private_output_io"
+            default 14
+            help 
+                Specify the encoder Pin of DT
+        config DUTY_THRESHOLD
+            int "duty_threshold"
+            default 300
+        
+        config DUTY_MAX_THRESHOLD
+            int "duty_max_threshold"
+            default 1024
+        
+    endchoice
+
+    config NVS_UPDATE_INTERVAL
+        int "device status record time interval [unit: minutes]"
+        default 10
+        
+endmenu
