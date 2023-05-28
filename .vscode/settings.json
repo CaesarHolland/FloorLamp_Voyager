@@ -1,5 +1,5 @@
 {
-    "idf.adapterTargetName": "esp32",
+    "idf.adapterTargetName": "esp32s3",
     "files.associations": {
         "stdio.h": "c",
         "sdkconfig.h": "c",
@@ -30,7 +30,15 @@
         "mymdns.h": "c",
         "mynvs.h": "c",
         "timer_types.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "compare": "c",
+        "string": "c",
+        "limits": "c",
+        "new": "c",
+        "type_traits": "c",
+        "istream": "c",
+        "clk_tree_defs.h": "c",
+        "radar.h": "c"
     },
     "idf.portWin": "COM5"
 }

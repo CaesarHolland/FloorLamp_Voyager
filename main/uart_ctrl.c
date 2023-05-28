@@ -2,31 +2,29 @@
 #include "driver/uart.h"
 #include "general_ctrl.h"
 
-static char * TAG = "uart";
-// esp_event_loop_handle_t  g_controller_loop_handler;
-// esp_event_base_t         DEVICE_AD   = "DEVICE_AD";
-// esp_event_base_t         DEVICE_MODE = "DEVICE_MODE";
-
+static char * TAG = "UART";
 static const int duty_step = 100;
+static QueueHandle_t uart2_queue;
+
 
 void uart_event_task(void *pvParameters)
 {
     uart_event_t uart2_event;
     size_t buffered_size;
-    char* dtmp = (char*) malloc(RD_BUF_SIZE);     // the buffer of reading data
+    char* dtmp = (char*) malloc(ASR_RD_BUF_SIZE);     // the buffer of reading data
 
     while (1)
     {
         // the task will keep blocked until the queue is not empty
         if (xQueueReceive(uart2_queue, (void *)&uart2_event, (TickType_t)portMAX_DELAY))
         {
-            memset(dtmp, 0, RD_BUF_SIZE);
-            ESP_LOGI(TAG, "uart[%d] event:", EX_UART_NUM);
+            memset(dtmp, 0, ASR_RD_BUF_SIZE);
+            ESP_LOGI(TAG, "uart[%d] event:", ASR_UART_NUM);
             switch (uart2_event.type)
             {
                 // queue received data:
                 case UART_DATA:
-                    uart_read_bytes(EX_UART_NUM, dtmp, uart2_event.size, portMAX_DELAY);
+                    uart_read_bytes(ASR_UART_NUM, dtmp, uart2_event.size, portMAX_DELAY);
                     // @todo: pass the data to controller function
                     int data = atoi(dtmp);
                     ESP_LOGI(TAG, "[UART DATA]: %d", data);
@@ -38,6 +36,7 @@ void uart_event_task(void *pvParameters)
                             DUTY_IRE_t dutyIre = {
                                 .public_duty_ire = duty_step,
                                 .private_duty_ire = duty_step,
+                                .zen_duty_ire = duty_step
                             };
                             esp_event_post_to(g_controller_loop_handler, DEVICE_AD, LM_IRE_AD, &dutyIre, sizeof(dutyIre)+1, portMAX_DELAY);
                             break;
@@ -49,6 +48,7 @@ void uart_event_task(void *pvParameters)
                             DUTY_IRE_t dutyIre = {
                                 .public_duty_ire = -duty_step,
                                 .private_duty_ire = -duty_step,
+                                .zen_duty_ire = -duty_step
                             };
                             esp_event_post_to(g_controller_loop_handler, DEVICE_AD, LM_IRE_AD, &dutyIre, sizeof(dutyIre)+1, portMAX_DELAY);
                             break;
@@ -110,7 +110,7 @@ void uart_event_task(void *pvParameters)
                     // If fifo overflow happened, you should consider adding flow control for your application.
                     // The ISR has already reset the rx FIFO,
                     // As an example, we directly flush the rx buffer here in order to read more data.
-                    uart_flush_input(EX_UART_NUM);
+                    uart_flush_input(ASR_UART_NUM);
                     xQueueReset(uart2_queue);
                     break;
 
@@ -119,7 +119,7 @@ void uart_event_task(void *pvParameters)
                     ESP_LOGI(TAG, "ring buffer full");
                     // If buffer full happened, you should consider increasing your buffer size
                     // As an example, we directly flush the rx buffer here in order to read more data.
-                    uart_flush_input(EX_UART_NUM);
+                    uart_flush_input(ASR_UART_NUM);
                     xQueueReset(uart2_queue);
                     break;
 
@@ -156,21 +156,22 @@ esp_err_t serial_init(int baudrate)
     const int uart2_buffer_size = 1024;
 
     uart_config_t uart_config = {
-        .baud_rate = baudrate,
-        .data_bits = UART_DATA_8_BITS,
-        .parity = UART_PARITY_DISABLE,
-        .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .baud_rate  = baudrate,
+        .data_bits  = UART_DATA_8_BITS,
+        .parity     = UART_PARITY_DISABLE,
+        .stop_bits  = UART_STOP_BITS_1,
+        .flow_ctrl  = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_DEFAULT,
         // .rx_flow_ctrl_thresh = 122,
     };
     // 2.1 Configure UART parameters
-    ESP_ERROR_CHECK(uart_param_config(EX_UART_NUM, &uart_config));
+    ESP_ERROR_CHECK(uart_param_config(ASR_UART_NUM, &uart_config));
 
     // 2.2 Set UART pins(TX: IO4, RX: IO5, RTS: IO18, CTS: IO19)
-    ESP_ERROR_CHECK(uart_set_pin(EX_UART_NUM, UART_TX, UART_RX, UART_RTS, UART_CTS));
+    ESP_ERROR_CHECK(uart_set_pin(ASR_UART_NUM, ASR_TX, ASR_RX, ASR_RTS, ASR_CTS));
 
     // 2.3 Install UART driver using an event queue here
-    ESP_ERROR_CHECK(uart_driver_install(EX_UART_NUM, uart2_buffer_size,
+    ESP_ERROR_CHECK(uart_driver_install(ASR_UART_NUM, uart2_buffer_size,
                                         uart2_buffer_size, 10, &uart2_queue, 0));
 
     // 2.4 Enable UART interrupt

@@ -141,7 +141,8 @@ void wifi_init_sta(void *ptr)
                                                         &instance_got_ip));
 
     // start traverse wifi_list to find an available AP
-    nvs_iterator_t wifilist_it = nvs_entry_find("nvs", "wifi_list", NVS_TYPE_BLOB);
+    nvs_iterator_t wifilist_it = NULL;
+    nvs_entry_find("nvs", "wifi_list", NVS_TYPE_BLOB, &wifilist_it);
     while (wifilist_it != NULL)
     {
         nvs_entry_info_t info;
@@ -182,7 +183,7 @@ void wifi_init_sta(void *ptr)
             ESP_LOGE(TAG, "UNEXPECTED EVENT");
         }
 
-        wifilist_it = nvs_entry_next(wifilist_it);
+        wifilist_it = nvs_entry_next(&wifilist_it);
     }
 
     // initialize http server:

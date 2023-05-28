@@ -73,7 +73,7 @@ static esp_err_t AD_event_get_handler(httpd_req_t *req)
                     ESP_LOGI(TAG, "envlm PARAM_VAL: %d", val);
                     httpd_resp_send(req, NULL, 0);
                 }
-                else if (strcmp("switch", paramArr) == 0) {
+                else if (strcmp("switch", paramArr) == 0) {         // /api/ad?switch=1
                     paramArr = strtok(NULL, "=");
                     int val = atoi(paramArr);
                     ESP_ERROR_CHECK(esp_event_post_to(g_controller_loop_handler, DEVICE_AD, SWITCH_AD, &val, sizeof(val)+1, portMAX_DELAY));

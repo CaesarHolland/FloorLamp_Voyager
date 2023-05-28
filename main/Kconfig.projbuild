@@ -53,6 +53,34 @@ menu "FLOORLAMP Configuration"
         
     endchoice
 
+    choice ASR_UART_SETTINGS
+        prompt "ASR UART2 settings"
+        config ASR_TXD
+            int "ASR_UART2_TXD"
+            default 17
+            
+        config ASR_RXD
+            int "ASR_UART2_RXD"
+            default 18
+
+    endchoice
+
+    choice RADAR_UART_SETTINGS
+        prompt "RADAR UART1 settings"
+        config RADAR_TXD
+            int "RADAR_UART1_TXD"
+            default 10
+            
+        config RADAR_RXD
+            int "RADAR_UART1_RXD"
+            default 9
+
+        config RADAR_OUT
+            int "RADAR_OUT"
+            default 24
+
+    endchoice
+
     config NVS_UPDATE_INTERVAL
         int "device status record time interval [unit: minutes]"
         default 10

@@ -6,9 +6,6 @@
                 "${workspaceFolder}/**",
                 "D:/Program/Espressif/**"
             ],
-            "forcedInclude": [
-                "D:/Program/Espressif/frameworks/esp-idf-v4.4.4/components/mdns/include/mdns.h"
-            ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",

@@ -1,6 +1,7 @@
 #include "general_ctrl.h"
 #include "driver/gpio.h"
-#include "driver/timer.h"
+// #include "driver/timer.h"
+#include "driver/gptimer.h"
 #include "hal/timer_types.h"
 
 /*
@@ -51,11 +52,6 @@ static EventGroupHandle_t       encoder_event_group;
     HARDWARE TIMER:
 */
 #define NVS_UPDATE_INTERVAL     CONFIG_NVS_UPDATE_INTERVAL
-#define TIMER_INTERVAL_SEC      (NVS_UPDATE_INTERVAL*60) // 10 minutes in seconds
-#define TIMER_SCALE             (TIMER_BASE_CLK / TIMER_DIVIDER) // convert counter value to seconds
-#define TIMER_DIVIDER           16 // hardware timer clock divider
-#define TIMER_GROUP             TIMER_GROUP_0
-#define TIMER_IDX               TIMER_0
 
 /*
     GLOBAL VARIBALES:
@@ -93,7 +89,7 @@ static void ledc_init(void);
 static void general_controller_handler(void *handler_arg, esp_event_base_t base, int32_t id, void *event_data);
 static void storage_timer_init();
 static void IRAM_ATTR storage_isr_handler(void *ptr);
-static void storage_daemon_task(void *ptr);
+static void IRAM_ATTR storage_daemon_handler(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_data);
 static void mode_relay_change(int flag);
 
 
@@ -290,11 +286,11 @@ static void general_controller_handler(void *handler_arg, esp_event_base_t base,
         {
             case LM_IRE_AD:
             {
-                // 这里传来的参数是增量，所以该task负责根据传递增量自行结合当前量判断，且默认传来的是合法的
+                // 这里传来的参数是增量，所以该task负责根据传递增量自行结合当前量判断
                 ESP_LOGI(TAG, "GET LM_IRE_AD event");
                 DUTY_IRE_t *duty_ire = (DUTY_IRE_t *)event_data;
                  
-                int pubd = (g_current_DEVICE_status.public_duty + duty_ire->public_duty_ire);
+                int pubd = g_current_DEVICE_status.public_duty + duty_ire->public_duty_ire;
                 int prid = g_current_DEVICE_status.private_duty + duty_ire->private_duty_ire;
                 int zend = g_current_DEVICE_status.zen_duty + duty_ire->zen_duty_ire;
 
@@ -346,6 +342,18 @@ static void general_controller_handler(void *handler_arg, esp_event_base_t base,
 
                 break;
             
+            /*
+                @brief: once it get switch event -- 
+                        if the action is switch-on:
+                        - light on
+                        - controller pause for 1.5s
+
+                        if the action is switch-off:
+                        - current mode is ZEN:
+                            - reduce pwm slowly untile 0
+                        - current mode is ORD:
+                            - pwm set as value of threshold directly
+            */
             case SWITCH_AD:
             {
                 ESP_LOGI(TAG, "GET SWITCH_AD event");
@@ -360,6 +368,7 @@ static void general_controller_handler(void *handler_arg, esp_event_base_t base,
                                     g_current_DEVICE_status.private_duty,
                                     g_current_DEVICE_status.zen_duty,
                                     g_current_DEVICE_status.switch_status);
+                    vTaskDelay(1500/portTICK_PERIOD_MS);
                 }
                 else {
                     // SWITCH OFF
@@ -460,24 +469,17 @@ static void encoder_task(void *ptr)
                     // means LIGHT ON action:
                     int flag=1;
                     ESP_ERROR_CHECK(esp_event_post_to(g_controller_loop_handler, DEVICE_AD, SWITCH_AD, &flag, 4, portMAX_DELAY));
-                    vTaskDelay(1500/portTICK_RATE_MS);
-                    g_counter = g_current_DEVICE_status.private_duty;
+                    vTaskDelay(1500/portTICK_PERIOD_MS);
                 }
                 else {
-                    dutyIre.public_duty_ire = g_counter-g_current_DEVICE_status.public_duty;
-                    dutyIre.private_duty_ire = g_counter-g_current_DEVICE_status.private_duty;
-                    dutyIre.zen_duty_ire = g_counter-g_current_DEVICE_status.zen_duty;
+                    // regular adjustment action
+                    dutyIre.public_duty_ire = g_speedRate*g_currentDir;
+                    dutyIre.private_duty_ire = g_speedRate*g_currentDir;
+                    dutyIre.zen_duty_ire = g_speedRate*g_currentDir;
 
-                    // ESP_ERROR_CHECK(esp_event_post_to(g_controller_loop_handler, DEVICE_AD, LM_IRE_AD, &dutyIre, size, portMAX_DELAY));
-                    if (g_current_DEVICE_status.mode == ZEN_MODE) {
-                        brightness_adj(g_counter, 0);
-                    }
-                    else {
-                        brightness_adj(g_counter, g_counter);
-                    }
-                    vTaskDelay(20/portTICK_RATE_MS);
+                    ESP_ERROR_CHECK(esp_event_post_to(g_controller_loop_handler, DEVICE_AD, LM_IRE_AD, &dutyIre, size, portMAX_DELAY));
+                    vTaskDelay(20/portTICK_PERIOD_MS);
                 }
-
             }
         }
     }
@@ -492,22 +494,19 @@ static void IRAM_ATTR update_encoder_isr_handler(void *arg)
     if (g_currentStateCLK != g_lastStateCLK && g_currentStateCLK) {
         if (gpio_get_level(ENCODER_DT) != g_currentStateCLK) {
             // decrease
-            g_counter >= (DUTY_THRESHOLD+g_speedRate) ? g_counter-=g_speedRate : (g_counter=DUTY_THRESHOLD);
+            // g_counter >= (DUTY_THRESHOLD+g_speedRate) ? g_counter-=g_speedRate : (g_counter=DUTY_THRESHOLD);
             g_currentDir = -1;
         }
         else {
             // increase
-            g_counter <= (DUTY_MAX_THRESHOLD-g_speedRate) ? g_counter+=g_speedRate : (g_counter=DUTY_MAX_THRESHOLD);
+            // g_counter <= (DUTY_MAX_THRESHOLD-g_speedRate) ? g_counter+=g_speedRate : (g_counter=DUTY_MAX_THRESHOLD);
             g_currentDir = 1;
         }
     }
     g_lastStateCLK = g_currentStateCLK;
 
-    
     xEventGroupSetBits(encoder_event_group, ENCODER_ISR_EVENT);
-    // xQueueSendFromISR(gpio_evt_queue, &g_counter, NULL);
 }
-
 
 
 static void encoder_init(void)
@@ -518,13 +517,13 @@ static void encoder_init(void)
     gpio_config_t io_conf = {
         //disable interrupt
         .intr_type = GPIO_INTR_ANYEDGE,
-        //set as output mode
+        //set as input mode
         .mode = GPIO_MODE_INPUT,
         //bit mask of the pins that you want to set,e.g.GPIO18/19
         .pin_bit_mask = ENCODER_IO_SEL,
         //disable pull-down mode
         .pull_down_en = 0,
-        //disable pull-up mode
+        //enable pull-up mode
         .pull_up_en = 1,
     };
     //configure GPIO with the given settings
@@ -541,32 +540,54 @@ static void encoder_init(void)
 }
 
 
-
 /*
     @brief:
         
         The timer will be paused when the light is off.
 */
 static void storage_timer_init(void) {
-    ESP_LOGE("STORAGE_TIMER_INIT", "RUNNING");
-    timer_config_t timerConfig = {
-        .divider = TIMER_DIVIDER,
-        .counter_dir = TIMER_COUNT_UP,
-        .counter_en = TIMER_PAUSE,
-        .alarm_en = 1,
-        .auto_reload = 1,
-    };
-    ESP_ERROR_CHECK(timer_init(TIMER_GROUP_0, TIMER_0, &timerConfig));
-    ESP_ERROR_CHECK(timer_set_counter_value(TIMER_GROUP_0, TIMER_0, 0x00000000ULL));
-    ESP_ERROR_CHECK(timer_set_alarm_value(TIMER_GROUP_0, TIMER_0, TIMER_INTERVAL_SEC * TIMER_SCALE));
-    ESP_ERROR_CHECK(timer_enable_intr(TIMER_GROUP_0, TIMER_0));
-    ESP_ERROR_CHECK(timer_isr_register(TIMER_GROUP_0, TIMER_0, storage_isr_handler, (void *) TIMER_0, ESP_INTR_FLAG_IRAM, NULL));
-    // ESP_ERROR_CHECK(timer_start(TIMER_GROUP_0, TIMER_0));
+    const char * TAG = "STORAGE TIEMR INIT";
+    ESP_LOGE(TAG, "Create timer");
 
-    xTaskCreate(storage_daemon_task, "storage_daemon", 1024*2, NULL, 10, NULL);
+    // example_queue_element_t ele;
+    // QueueHandle_t queue = xQueueCreate(10, sizeof(example_queue_element_t));
+    // if (!queue) {
+    //     ESP_LOGE(TAG, "Creating queue failed");
+    //     return;
+    // }
+
+    // config timer   
+    gptimer_handle_t gptimer = NULL;
+    gptimer_config_t timer_config = {
+        .clk_src = GPTIMER_CLK_SRC_DEFAULT,
+        .direction = GPTIMER_COUNT_UP,
+        .resolution_hz = 1000, // 1KHz, 1 tick=1ms
+    };
+    ESP_ERROR_CHECK(gptimer_new_timer(&timer_config, &gptimer));
+
+    // set callback function of alert
+    gptimer_event_callbacks_t cbs = {
+        .on_alarm = storage_daemon_handler,
+    };
+    ESP_ERROR_CHECK(gptimer_register_event_callbacks(gptimer, &cbs, NULL));    // Set callback function when tiemr is triggered.
+
+    // enable timer
+    ESP_LOGI(TAG, "Enable timer");
+    ESP_ERROR_CHECK(gptimer_enable(gptimer));
+
+    // config timer alert action and start timer
+    ESP_LOGI(TAG, "Start timer and repeat");
+    gptimer_alarm_config_t alarm_config = {
+        .alarm_count = NVS_UPDATE_INTERVAL*60*1000, // period = 10min,
+        .reload_count = 0,
+        .flags.auto_reload_on_alarm = true,
+    };
+    ESP_ERROR_CHECK(gptimer_set_alarm_action(gptimer, &alarm_config));
+    ESP_ERROR_CHECK(gptimer_start(gptimer));
+
 }
 
-static void storage_daemon_task(void *ptr) {
+static void IRAM_ATTR storage_daemon_handler(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_data) {
     ESP_LOGE("STORAGE_DAEMON", "RUNNING");
     while (1)
     {
